@@ -21,7 +21,7 @@
  * @property {boolean} dir_exists
  * @property {string} editable
  */
-
+console.log("hellllooooo")
 var DUFS_MAX_UPLOADINGS = 1;
 
 /**
