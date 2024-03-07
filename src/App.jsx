@@ -3,10 +3,10 @@ import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
 import { Command } from "@tauri-apps/api/shell";
+import Client from "./components/client/Client";
 
 // Go to shell.js and learn how to implement
 function App() {
-  const [runServerErr, setRunServerErr] = useState(null);
   const [runServerStdout, setRunServerStdout] = useState(null);
   const [runServerStderr, setRunServerStderr] = useState(null);
   const command = Command.sidecar("../public/dufs"); // sidecar also returns an instance of Command
@@ -19,7 +19,6 @@ function App() {
   });
   command.on("error", (error) => {
     console.error(`command error: "${error}"`);
-    setRunServerErr(error);
   });
   command.stdout.on("data", (line) => {
     console.log(`command stdout: "${line}"`);
@@ -62,6 +61,7 @@ function App() {
 
   return (
     <div className="container">
+      <h1>Server</h1>
       {server ? <div>Server running...</div> : <div>Click to run server</div>}
       <button onClick={handleRunServer}>Run dufs</button>
       <button onClick={handleStopServer}>Stop dufs</button>
@@ -70,6 +70,9 @@ function App() {
         {runServerStderr && <div>{runServerStderr}</div>}
         {runServerStdout && <div>{runServerStdout}</div>} */}
       </div>
+      <br />
+      <br />
+      <Client />
     </div>
   );
 }

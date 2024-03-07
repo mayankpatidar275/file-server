@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="icon" type="image/x-icon" href="__ASSETS_PREFIX__favicon.ico" />
+    <link rel="stylesheet" href="__ASSETS_PREFIX__index.css" />
+
+    <title>Document</title>
+
+    <!-- Adding __ASSETS_PREFIX__ refers to the built-in js css favicon -->
+    <!-- <script src="__ASSETS_PREFIX__index.js"></script> -->
+
+    <!-- <script>
+      DATA = __INDEX_DATA__;
+      // without this line it will give error. Reference: line 48 index.js dufs github.
+      // You have to do it in a seperate scripts in html only.
+    </script> -->
+  </head>
+  <body>
+    Hello dufs client
+
+    <script>
+      // found only way to give custom javascript. (using scripts tag, external file wont work)
+      console.log("inside html "); // works
+    </script>
+
+    <!-- <script src="custom.js"></script>       not working (html dont even found this custom.js file) -->
+  </body>
+</html>
