@@ -1,0 +1,104 @@
+{
+    "href": "/",
+    "kind": "Index",
+    "uri_prefix": "/",
+    "allow_upload": false,
+    "allow_delete": false,
+    "allow_search": false,
+    "allow_archive": false,
+    "dir_exists": true,
+    "auth": false,
+    "user": null,
+    "paths": [
+        {
+            "path_type": "Dir",
+            "name": ".git",
+            "mtime": 41,
+            "size": null
+        },
+        {
+            "path_type": "Dir",
+            "name": ".vscode",
+            "mtime": 74,
+            "size": null
+        },
+        {
+            "path_type": "Dir",
+            "name": "frontend",
+            "mtime": 1709903700106,
+            "size": null
+        },
+        {
+            "path_type": "Dir",
+            "name": "node_modules",
+            "mtime": 1709524437478,
+            "size": null
+        },
+        {
+            "path_type": "Dir",
+            "name": "public",
+            "mtime": 1709871591632,
+            "size": null
+        },
+        {
+            "path_type": "Dir",
+            "name": "src",
+            "mtime": 1709660052126,
+            "size": null
+        },
+        {
+            "path_type": "Dir",
+            "name": "src-tauri",
+            "mtime": 1709565763423,
+            "size": null
+        },
+        {
+            "path_type": "File",
+            "name": ".gitignore",
+            "mtime": 1709524214375,
+            "size": 253
+        },
+        {
+            "path_type": "File",
+            "name": "dufs-x86_64-unknown-linux-gnu",
+            "mtime": 1709903950430,
+            "size": 4369688
+        },
+        {
+            "path_type": "File",
+            "name": "index.html",
+            "mtime": 1709524214375,
+            "size": 363
+        },
+        {
+            "path_type": "File",
+            "name": "Learn.txt",
+            "mtime": 1709736352290,
+            "size": 0
+        },
+        {
+            "path_type": "File",
+            "name": "package-lock.json",
+            "mtime": 1709524284148,
+            "size": 104287
+        },
+        {
+            "path_type": "File",
+            "name": "package.json",
+            "mtime": 1709524214375,
+            "size": 424
+        },
+        {
+            "path_type": "File",
+            "name": "README.md",
+            "mtime": 1709524214375,
+            "size": 353
+        },
+        {
+            "path_type": "File",
+            "name": "vite.config.js",
+            "mtime": 1709524214375,
+            "size": 589
+        }
+    ]
+}
