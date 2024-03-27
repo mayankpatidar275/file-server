@@ -1,6 +1,7 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 
-function FolderAndFiles({ isFolder, name, p }) {
+function FolderAndFiles({ getFileContent, isFolder, name, p, setFileContent }) {
   const [data, setData] = useState(null);
   const [expand, setExpand] = useState(false);
   // const isFile = p.includes(".");
@@ -8,7 +9,7 @@ function FolderAndFiles({ isFolder, name, p }) {
   useEffect(() => {
     console.log("p : ", p);
     if (isFolder) {
-      fetch(`http://192.168.1.35:5000${p}`)
+      fetch(`http://192.168.0.115:5000${p}`)
         .then((res) => res.text())
         .then((html) => {
           const tempDiv = document.createElement("div");
@@ -33,25 +34,41 @@ function FolderAndFiles({ isFolder, name, p }) {
   }, []); // Add 'p' and 'isFile' to the dependency array
 
   if (!isFolder) {
-    return <span className="file">📄 {name}</span>;
+    return (
+      <spans
+        style={{ cursor: "pointer" }}
+        onClick={() => getFileContent(p)}
+        className="file"
+      >
+        📄 {name}
+      </spans>
+    );
   }
 
   return (
     <div>
       <div style={{ marginTop: 5 }}>
-        <div onClick={() => setExpand(!expand)} className="folder">
+        <div
+          onClick={() => {
+            setExpand(!expand);
+            setFileContent("File preview");
+          }}
+          className="folder"
+        >
           <span>📁 {name}</span>
         </div>
 
         {expand && (
-          <div style={{ display: expand ? "block" : "none", paddingLeft: 25 }}>
+          <div style={{ display: expand ? "block" : "none", paddingLeft: 12 }}>
             {data &&
               data.paths.map((item, index) => (
                 <FolderAndFiles
                   key={index}
+                  getFileContent={getFileContent}
                   isFolder={item.path_type == "Dir" ? true : false}
                   name={item.name}
                   p={data.href + `${data.href == "/" ? "" : "/"}` + item.name}
+                  setFileContent={setFileContent}
                 />
               ))}
           </div>
