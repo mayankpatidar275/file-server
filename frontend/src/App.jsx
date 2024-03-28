@@ -37,7 +37,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    fetch(`http://192.168.1.35:5000`)
+    fetch(`http://192.168.0.115:5000`)
       .then((res) => {
         // Check if the response is HTML
         const isHTML = res.headers.get("content-type").includes("text/html");

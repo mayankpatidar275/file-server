@@ -18,7 +18,7 @@
         "sidecar": true,  
         "open": true ,
         "scope": [ 
-          { "name": "../public/dufs", "sidecar": true }
+          { "name": "../public/dufs", "sidecar": true, "args": true}
         ]
       }
     },

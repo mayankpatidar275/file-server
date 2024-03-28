@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
@@ -9,8 +9,22 @@ import Client from "./components/client/Client";
 function App() {
   const [runServerStdout, setRunServerStdout] = useState(null);
   const [runServerStderr, setRunServerStderr] = useState(null);
-  const command = Command.sidecar("../public/dufs"); // sidecar also returns an instance of Command
+
+  // https://tauri.app/v1/api/js/shell/#restricting-access-to-the-command-apis
+  // https://tauri.app/v1/guides/building/sidecar/#passing-arguments
+
   const [server, setServer] = useState(null);
+
+  // arguments
+  const [servePath, setServePath] = useState("/home/mayank/Downloads/");
+  // const [configFile, setConfigFile] = useState('');
+  // const [bindAddress, setBindAddress] = useState('');
+  const [port, setPort] = useState("5000");
+  const [enableCors, setEnableCors] = useState(false);
+  const [allowAll, setAllowAll] = useState(false);
+  const [commandArgs, setCommandArgs] = useState([]);
+
+  const command = Command.sidecar("../public/dufs", commandArgs); // sidecar also returns an instance of Command
 
   command.on("close", (data) => {
     console.log(
@@ -29,13 +43,22 @@ function App() {
     setRunServerStderr(line);
   });
 
+  useEffect(() => {
+    const argsList = [];
+    if (allowAll) argsList.push("-A");
+    if (enableCors) argsList.push("--enable-cors");
+    if (port) argsList.push("--port", port);
+    if (servePath) argsList.push(servePath);
+    setCommandArgs(argsList);
+  }, [allowAll, enableCors, port, servePath]);
+
   const handleRunServer = async () => {
     try {
       if (!server) {
-        console.log("server: ", server);
+        // if (port) args.push("-p", port);
         const newServer = await command.spawn();
         setServer(newServer); // Set server state
-        console.log("server running: ", newServer);
+        // console.log("server running: ", newServer);
       } else {
         console.log("already running");
       }
@@ -62,6 +85,32 @@ function App() {
   return (
     <div className="container">
       <h1>Server</h1>
+      {/* UI for inputting arguments */}
+      <input
+        type="text"
+        value={servePath}
+        onChange={(e) => setServePath(e.target.value)}
+        placeholder="Serve Path"
+      />
+      <input
+        type="text"
+        value={port}
+        onChange={(e) => setPort(e.target.value)}
+        placeholder="Port"
+      />
+      <input
+        type="checkbox"
+        checked={enableCors}
+        onChange={(e) => setEnableCors(e.target.checked)}
+      />
+      <label htmlFor="cors"> Enable CORS </label>
+      <input
+        type="checkbox"
+        checked={allowAll}
+        onChange={(e) => setAllowAll(e.target.checked)}
+      />
+      <label htmlFor="allowAll"> Allow all operations </label>
+
       {server ? <div>Server running...</div> : <div>Click to run server</div>}
       <button onClick={handleRunServer}>Run dufs</button>
       <button onClick={handleStopServer}>Stop dufs</button>
