@@ -7,9 +7,6 @@ import Client from "./components/client/Client";
 
 // Go to shell.js and learn how to implement
 function App() {
-  const [runServerStdout, setRunServerStdout] = useState(null);
-  const [runServerStderr, setRunServerStderr] = useState(null);
-
   // https://tauri.app/v1/api/js/shell/#restricting-access-to-the-command-apis
   // https://tauri.app/v1/guides/building/sidecar/#passing-arguments
 
@@ -17,8 +14,6 @@ function App() {
 
   // arguments
   const [servePath, setServePath] = useState("/home/mayank/Downloads/");
-  // const [configFile, setConfigFile] = useState('');
-  // const [bindAddress, setBindAddress] = useState('');
   const [port, setPort] = useState("5000");
   const [enableCors, setEnableCors] = useState(false);
   const [allowAll, setAllowAll] = useState(false);
@@ -36,11 +31,9 @@ function App() {
   });
   command.stdout.on("data", (line) => {
     console.log(`command stdout: "${line}"`);
-    setRunServerStdout(line);
   });
   command.stderr.on("data", (line) => {
     console.log(`command stderr: "${line}"`);
-    setRunServerStderr(line);
   });
 
   useEffect(() => {
@@ -55,10 +48,8 @@ function App() {
   const handleRunServer = async () => {
     try {
       if (!server) {
-        // if (port) args.push("-p", port);
         const newServer = await command.spawn();
         setServer(newServer); // Set server state
-        // console.log("server running: ", newServer);
       } else {
         console.log("already running");
       }
@@ -114,11 +105,7 @@ function App() {
       {server ? <div>Server running...</div> : <div>Click to run server</div>}
       <button onClick={handleRunServer}>Run dufs</button>
       <button onClick={handleStopServer}>Stop dufs</button>
-      <div>
-        {/* {runServerErr && <div>{runServerErr}</div>}
-        {runServerStderr && <div>{runServerStderr}</div>}
-        {runServerStdout && <div>{runServerStdout}</div>} */}
-      </div>
+
       <br />
       <br />
       <Client />

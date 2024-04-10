@@ -1,0 +1,31 @@
+Todo: 
+
+run the server again if it is already running : on run dufs
+Allow to enter only possible ports. like 6000 didnt worked but 7000 works.
+DNS revision
+Micorservices
+
+Advertise the ip and port on network
+
+
+Decisions: 
+Central registry and deregistry of the service when server starts and stops.
+
+
+
+
+Learnings: 
+
+Zero-configuration Networking (Zeroconf)
+DNS : https://www.youtube.com/watch?v=6xDWeaatAs0&list=PLks8W396lro76WKqVS5pvBiOd_z_Cx25q&index=3
+What's the history behind 192.168.1.1 Why not 192.169.1.1 or any other IP address
+Multicast DNS explained: https://www.youtube.com/watch?v=CPOpPTpMSiE 
+Monolithic vs Micorservices  : Nextjs app is a good example of Monolithic architecture
+revision Micorservices
+
+
+Other ways other then mdns: 
+for loop 192.169._._ 
+Central database
+https://www.youtube.com/watch?v=v4u7m2Im7ng
+
