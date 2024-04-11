@@ -1,22 +1,33 @@
-// src/broadcast.rs
+use mdns_sd::{ServiceDaemon, ServiceInfo};
+// use std::collections::HashMap;
 
-use std::net::{IpAddr, Ipv4Addr, SocketAddr, UdpSocket};
-use tokio::time::{sleep, Duration};
+pub async fn start_broadcasting() {
+    // Create a daemon
+    let mdns = ServiceDaemon::new().expect("Failed to create daemon");
 
-pub async fn start_broadcasting(port: u16) {
-    let socket = UdpSocket::bind("0.0.0.0:0").expect("Failed to bind socket");
-    socket.set_broadcast(true).expect("Failed to set broadcast");
+    // Create a service info.
+    let service_type = "_mdns-sd-my-test._udp.local.";
+    let instance_name = "my_instance";
+    let ip = "192.168.1.12";
+    let host_name = "192.168.1.12.local.";
+    let port = 5200;
+    let properties = [("property_1", "test"), ("property_2", "1234")];
 
-    let broadcast_addr = SocketAddr::new(IpAddr::V4(Ipv4Addr::BROADCAST), port);
+    let my_service = ServiceInfo::new(
+        service_type,
+        instance_name,
+        host_name,
+        ip,
+        port,
+        &properties[..],
+    )
+    .unwrap();
 
-    loop {
-        let message = "Your broadcast message here";
-        socket
-            .send_to(message.as_bytes(), broadcast_addr)
-            .expect("Failed to send broadcast");
+    // Register with the daemon, which publishes the service.
+    mdns.register(my_service)
+        .expect("Failed to register our service");
 
-        // Broadcast every 5 seconds
-        println!("inside loop");
-        sleep(Duration::from_secs(5)).await;
-    }
+    // Gracefully shutdown the daemon
+    std::thread::sleep(std::time::Duration::from_secs(1));
+    mdns.shutdown().unwrap();
 }

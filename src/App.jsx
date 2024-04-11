@@ -39,10 +39,20 @@ function App() {
   const startBroadcast = async () => {
     // Start broadcasting
     try {
-      await invoke("start_broadcasting", { port: 5000 });
+      await invoke("start_broadcasting");
       console.log("Broadcasting started");
     } catch (error) {
       console.error("Error starting broadcasting:", error);
+    }
+  };
+
+  const startDiscovering = async () => {
+    // Start broadcasting
+    try {
+      await invoke("start_discovering");
+      console.log("Discovering started");
+    } catch (error) {
+      console.error("Error starting discovering:", error);
     }
   };
 
@@ -86,6 +96,7 @@ function App() {
   return (
     <div className="container">
       <button onClick={startBroadcast}>Broadcast</button>
+      <button onClick={startDiscovering}>Discovering</button>
       <h1>Server</h1>
       {/* UI for inputting arguments */}
       <input

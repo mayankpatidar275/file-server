@@ -38,3 +38,8 @@ only .local are allowed in mdns
 https://www.geeksforgeeks.org/multicasting-in-computer-network/
 https://medium.com/@yassinehouta/multicasting-using-rxjs-588740d7a5db
 https://networklessons.com/multicast/introduction-to-multicast
+
+
+
+https://docs.rs/mdns-sd/latest/mdns_sd/index.html#
+mDNS app in android to discover
