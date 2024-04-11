@@ -29,3 +29,12 @@ for loop 192.169._._
 Central database
 https://www.youtube.com/watch?v=v4u7m2Im7ng
 
+
+
+
+https://www.youtube.com/watch?v=dKS_OMUGHoE&t=515s 
+only .local are allowed in mdns
+
+https://www.geeksforgeeks.org/multicasting-in-computer-network/
+https://medium.com/@yassinehouta/multicasting-using-rxjs-588740d7a5db
+https://networklessons.com/multicast/introduction-to-multicast

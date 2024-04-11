@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
-import Folder from "./components/Folder";
-import useTraverseTree from "./hooks/use-traverse-tree";
 import "./styles.css";
 import "./App.css";
-import explorer from "./data/folderData";
 import FolderAndFiles from "./components/FolderAndFiles";
 import FileViewer from "./components/FileViewer";
 
@@ -11,15 +8,6 @@ export default function App() {
   const [isFolder, setIsFolder] = useState(true);
 
   const [fileContent, setFileContent] = useState("");
-
-  // const [explorerData, setExplorerData] = useState(explorer);
-
-  // const { insertNode } = useTraverseTree();
-
-  // const handleInsertNode = (folderId, item, isFolder) => {
-  //   const finalTree = insertNode(explorerData, folderId, item, isFolder);
-  //   setExplorerData(finalTree);
-  // };
 
   function getFileContent(p) {
     console.log("getFileContent called: ");

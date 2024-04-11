@@ -36,6 +36,16 @@ function App() {
     console.log(`command stderr: "${line}"`);
   });
 
+  const startBroadcast = async () => {
+    // Start broadcasting
+    try {
+      await invoke("start_broadcasting", { port: 5000 });
+      console.log("Broadcasting started");
+    } catch (error) {
+      console.error("Error starting broadcasting:", error);
+    }
+  };
+
   useEffect(() => {
     const argsList = [];
     if (allowAll) argsList.push("-A");
@@ -75,6 +85,7 @@ function App() {
 
   return (
     <div className="container">
+      <button onClick={startBroadcast}>Broadcast</button>
       <h1>Server</h1>
       {/* UI for inputting arguments */}
       <input
