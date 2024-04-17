@@ -13,6 +13,12 @@ async fn start_broadcasting() {
 }
 
 #[tauri::command]
+async fn stop_broadcasting() {
+    print!("iside stop_broadcasting");
+    broadcast::stop_broadcasting().await;
+}
+
+#[tauri::command]
 async fn start_discovering() {
     println!("inside start_discovering");
     discover::start_discovering().await;
@@ -25,6 +31,7 @@ fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             start_broadcasting,
+            stop_broadcasting,
             start_discovering
         ])
         .run(tauri::generate_context!())

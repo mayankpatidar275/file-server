@@ -610,6 +610,7 @@ dependencies = [
 name = "dufsgui"
 version = "0.0.0"
 dependencies = [
+ "lazy_static",
  "mdns-sd",
  "serde",
  "serde_json",

@@ -7,6 +7,8 @@ Micorservices
 
 Advertise the ip and port on network
 
+Decide to make a website or desktop app for client side (discover).
+
 
 Decisions: 
 Central registry and deregistry of the service when server starts and stops.

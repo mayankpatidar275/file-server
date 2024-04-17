@@ -1,9 +1,21 @@
+use lazy_static::lazy_static;
 use mdns_sd::{ServiceDaemon, ServiceInfo};
-// use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
+
+// Define a global variable to hold the ServiceDaemon instance
+lazy_static! {
+    static ref MDNS: Arc<Mutex<Option<ServiceDaemon>>> = Arc::new(Mutex::new(None));
+}
 
 pub async fn start_broadcasting() {
-    // Create a daemon
-    let mdns = ServiceDaemon::new().expect("Failed to create daemon");
+    // Acquire lock on MDNS
+    let mut mdns_guard = MDNS.lock().unwrap();
+
+    // Create a daemon if it's not already created
+    if mdns_guard.is_none() {
+        let mdns = ServiceDaemon::new().expect("Failed to create daemon");
+        *mdns_guard = Some(mdns);
+    }
 
     // Create a service info.
     let service_type = "_mdns-sd-my-test._udp.local.";
@@ -22,12 +34,26 @@ pub async fn start_broadcasting() {
         &properties[..],
     )
     .unwrap();
-
+    println!("my service: {:?}", my_service);
     // Register with the daemon, which publishes the service.
-    mdns.register(my_service)
+    mdns_guard
+        .as_mut()
+        .unwrap()
+        .register(my_service)
         .expect("Failed to register our service");
 
+    println!("Service registered successfully ");
+}
+
+pub async fn stop_broadcasting() {
     // Gracefully shutdown the daemon
     std::thread::sleep(std::time::Duration::from_secs(1));
-    mdns.shutdown().unwrap();
+
+    // Acquire lock on MDNS
+    let mut mdns_guard = MDNS.lock().unwrap();
+
+    // Shut down the daemon if it's created
+    if let Some(mdns) = mdns_guard.take() {
+        mdns.shutdown().unwrap();
+    }
 }
