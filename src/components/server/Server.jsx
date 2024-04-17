@@ -102,43 +102,79 @@ const Server = () => {
   };
 
   return (
-    <div>
-      <button onClick={startBroadcast}>Broadcast</button>
-      <button onClick={stopBroadcast}>Stop Broadcast</button>
-      <button onClick={startDiscovering}>Discovering</button>
-      <h1>Server</h1>
-      {/* UI for inputting arguments */}
-      <input
-        type="text"
-        value={servePath}
-        onChange={(e) => setServePath(e.target.value)}
-        placeholder="Serve Path"
-      />
-      <input
-        type="text"
-        value={port}
-        onChange={(e) => setPort(e.target.value)}
-        placeholder="Port"
-      />
-      <input
-        type="checkbox"
-        checked={enableCors}
-        onChange={(e) => setEnableCors(e.target.checked)}
-      />
-      <label htmlFor="cors"> Enable CORS </label>
-      <input
-        type="checkbox"
-        checked={allowAll}
-        onChange={(e) => setAllowAll(e.target.checked)}
-      />
-      <label htmlFor="allowAll"> Allow all operations </label>
+    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold mb-4">Server Setup</h1>
 
-      {server ? <div>Server running...</div> : <div>Click to run server</div>}
-      <button onClick={handleRunServer}>Run dufs</button>
-      <button onClick={handleStopServer}>Stop dufs</button>
+      <div className="mb-4">
+        <label htmlFor="servePath" className="block font-semibold mb-2">
+          Serve Path
+        </label>
+        <input
+          type="text"
+          value={servePath}
+          onChange={(e) => setServePath(e.target.value)}
+          placeholder="Serve Path"
+          className="w-full border rounded-md px-4 py-2 focus:outline-none focus:border-blue-500"
+        />
+      </div>
 
-      <br />
-      <br />
+      <div className="mb-4">
+        <label htmlFor="port" className="block font-semibold mb-2">
+          Port
+        </label>
+        <input
+          type="text"
+          value={port}
+          onChange={(e) => setPort(e.target.value)}
+          placeholder="Port"
+          className="w-full border rounded-md px-4 py-2 focus:outline-none focus:border-blue-500"
+        />
+      </div>
+
+      <div className="mb-4">
+        <input
+          type="checkbox"
+          id="cors"
+          checked={enableCors}
+          onChange={(e) => setEnableCors(e.target.checked)}
+          className="mr-2"
+        />
+        <label htmlFor="cors" className="font-semibold">
+          Enable CORS
+        </label>
+      </div>
+
+      <div className="mb-4">
+        <input
+          type="checkbox"
+          id="allowAll"
+          checked={allowAll}
+          onChange={(e) => setAllowAll(e.target.checked)}
+          className="mr-2"
+        />
+        <label htmlFor="allowAll" className="font-semibold">
+          Allow all operations
+        </label>
+      </div>
+
+      <div className="mb-4">
+        {server ? <div>Server running...</div> : <div>Click to run server</div>}
+      </div>
+
+      <div className="flex space-x-4">
+        <button
+          onClick={handleRunServer}
+          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
+        >
+          Run Server
+        </button>
+        <button
+          onClick={handleStopServer}
+          className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none"
+        >
+          Stop Server
+        </button>
+      </div>
     </div>
   );
 };

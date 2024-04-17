@@ -5,11 +5,12 @@ import Server from "./components/server/Server";
 import Navbar from "./components/navbar/Navbar";
 
 function App() {
-  const [isServerPage, setIsServerPage] = useState(true);
+  const [activeTab, setActiveTab] = useState("server");
   return (
     <div className="container">
-      <Navbar />
-      {isServerPage ? <Server /> : <Client />}
+      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+
+      {activeTab === "server" ? <Server /> : <Client />}
     </div>
   );
 }
