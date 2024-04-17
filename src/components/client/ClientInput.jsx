@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 
-const ClientInput = ({ onSubmit }) => {
-  const [ip, setIp] = useState("");
-  const [port, setPort] = useState("");
-
+const ClientInput = ({ setIsSubmitted, ip, port, setIp, setPort }) => {
   const handleIpChange = (e) => {
     setIp(e.target.value);
   };
@@ -14,7 +11,7 @@ const ClientInput = ({ onSubmit }) => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    onSubmit(ip, port);
+    setIsSubmitted(true);
   };
 
   return (

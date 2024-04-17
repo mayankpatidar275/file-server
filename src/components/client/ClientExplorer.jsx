@@ -7,6 +7,7 @@ const ClientExplorer = ({ ip, port }) => {
   const [fileContent, setFileContent] = useState("");
 
   useEffect(() => {
+    // fetch(lastFetch ? lastFetch : `http://${ip}:${port}`)
     fetch(`http://${ip}:${port}`)
       .then((res) => {
         const isHTML = res.headers.get("content-type").includes("text/html");
@@ -44,6 +45,7 @@ const ClientExplorer = ({ ip, port }) => {
             setFileContent={setFileContent}
             searchIp={ip}
             searchPort={port}
+            // setLastFetch={setLastFetch}
           />
         </div>
         <div className="w-2/3 bg-white p-4">

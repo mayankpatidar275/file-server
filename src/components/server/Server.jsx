@@ -11,7 +11,7 @@ const Server = () => {
   const [server, setServer] = useState(null);
 
   // arguments
-  const [servePath, setServePath] = useState("/home/mayank/Downloads/");
+  const [servePath, setServePath] = useState("/home/mayank/Documents/");
   const [port, setPort] = useState("5000");
   const [enableCors, setEnableCors] = useState(false);
   const [allowAll, setAllowAll] = useState(false);

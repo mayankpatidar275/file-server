@@ -8,6 +8,7 @@ function FolderAndFiles({
   setFileContent,
   searchIp,
   searchPort,
+  // setLastFetch,
 }) {
   const [data, setData] = useState(null);
   const [expand, setExpand] = useState(false);
@@ -17,6 +18,7 @@ function FolderAndFiles({
       fetch(`http://${searchIp}:${searchPort}${p}`)
         .then((res) => res.text())
         .then((html) => {
+          // setLastFetch(`http://${searchIp}:${searchPort}${p}`);
           const tempDiv = document.createElement("div");
           tempDiv.innerHTML = html;
 
@@ -72,6 +74,7 @@ function FolderAndFiles({
                   setFileContent={setFileContent}
                   searchIp={searchIp}
                   searchPort={searchPort}
+                  // setLastFetch={setLastFetch}
                 />
               ))}
           </div>

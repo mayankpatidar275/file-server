@@ -6,6 +6,7 @@ import Navbar from "./components/navbar/Navbar";
 
 function App() {
   const [activeTab, setActiveTab] = useState("server");
+  // const [lastFetch, setLastFetch] = useState(null);
   return (
     <div className="container">
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
