@@ -3,7 +3,7 @@ import ClientInput from "./ClientInput";
 import ClientExplorer from "./ClientExplorer";
 
 const Client = () => {
-  const [ip, setIp] = useState("192.168.0.115");
+  const [ip, setIp] = useState("192.168.1.35");
   const [port, setPort] = useState("5000");
   const [isSubmitted, setIsSubmitted] = useState(false);
 

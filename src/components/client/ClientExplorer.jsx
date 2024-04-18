@@ -60,7 +60,7 @@ const ClientExplorer = ({ ip, port }) => {
         </div>
       ) : (
         <div className="flex justify-center items-center h-screen  ">
-          Failed to fetch data
+          No response
         </div>
       )}
     </div>

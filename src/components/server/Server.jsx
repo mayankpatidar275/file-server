@@ -4,17 +4,15 @@ import React from "react";
 import { Command } from "@tauri-apps/api/shell";
 
 // Go to shell.js and learn how to implement
-const Server = () => {
+const Server = ({ server, setServer }) => {
   // https://tauri.app/v1/api/js/shell/#restricting-access-to-the-command-apis
   // https://tauri.app/v1/guides/building/sidecar/#passing-arguments
-
-  const [server, setServer] = useState(null);
 
   // arguments
   const [servePath, setServePath] = useState("/home/mayank/Documents/");
   const [port, setPort] = useState("5000");
-  const [enableCors, setEnableCors] = useState(false);
-  const [allowAll, setAllowAll] = useState(false);
+  const [enableCors, setEnableCors] = useState(true);
+  const [allowAll, setAllowAll] = useState(true);
   const [commandArgs, setCommandArgs] = useState([]);
 
   const command = Command.sidecar("../public/dufs", commandArgs); // sidecar also returns an instance of Command

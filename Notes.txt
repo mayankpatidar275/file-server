@@ -26,7 +26,7 @@ What's the history behind 192.168.1.1 Why not 192.169.1.1 or any other IP addres
 Multicast DNS explained: https://www.youtube.com/watch?v=CPOpPTpMSiE 
 Monolithic vs Micorservices  : Nextjs app is a good example of Monolithic architecture
 revision Micorservices
-
+I am not sure: using a ref to store the server instance in your Server component will ensure that it persists across navigation changes, hot reloads, and component re-renders.
 
 Other ways other then mdns: 
 for loop 192.169._._ 
