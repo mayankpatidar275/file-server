@@ -5,6 +5,7 @@ import FileViewer from "./FileViewer";
 const ClientExplorer = ({ ip, port }) => {
   const [isFolder, setIsFolder] = useState(true);
   const [fileContent, setFileContent] = useState("");
+  const [isFetchFailed, setIsFetchFailed] = useState(false);
 
   useEffect(() => {
     // fetch(lastFetch ? lastFetch : `http://${ip}:${port}`)
@@ -18,6 +19,7 @@ const ClientExplorer = ({ ip, port }) => {
         setFileContent(isFolder ? "" : data);
       })
       .catch((error) => {
+        setIsFetchFailed(true);
         console.error("Error fetching data:", error);
       });
   }, [ip, port, isFolder]);
@@ -34,27 +36,33 @@ const ClientExplorer = ({ ip, port }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      <div className="flex-1 flex">
-        <div className="w-1/3 bg-gray-200 overflow-y-auto p-4">
-          <FolderAndFiles
-            getFileContent={getFileContent}
-            isFolder={true}
-            name={"dufsRoot"}
-            p={"/"}
-            setFileContent={setFileContent}
-            searchIp={ip}
-            searchPort={port}
-            // setLastFetch={setLastFetch}
-          />
+    <div className="flex flex-col   bg-gray-50">
+      {!isFetchFailed ? (
+        <div className="flex-1 flex">
+          <div className="w-1/3 bg-gray-200 h-[70vh] overflow-y-auto p-4">
+            <FolderAndFiles
+              getFileContent={getFileContent}
+              isFolder={true}
+              name={"dufsRoot"}
+              p={"/"}
+              setFileContent={setFileContent}
+              searchIp={ip}
+              searchPort={port}
+              // setLastFetch={setLastFetch}
+            />
+          </div>
+          <div className="w-2/3 bg-white ">
+            <FileViewer
+              getFileContent={getFileContent}
+              fileContent={fileContent}
+            />
+          </div>
         </div>
-        <div className="w-2/3 bg-white p-4">
-          <FileViewer
-            getFileContent={getFileContent}
-            fileContent={fileContent}
-          />
+      ) : (
+        <div className="flex justify-center items-center h-screen  ">
+          Failed to fetch data
         </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -103,6 +103,24 @@ const Server = () => {
 
   return (
     <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+      <button
+        onClick={startBroadcast}
+        className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none"
+      >
+        Start Broadcast
+      </button>
+      <button
+        onClick={stopBroadcast}
+        className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none"
+      >
+        Stop Broadcast
+      </button>
+      <button
+        onClick={startDiscovering}
+        className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none"
+      >
+        Start Discovering
+      </button>
       <h1 className="text-2xl font-bold mb-4">Server Setup</h1>
 
       <div className="mb-4">

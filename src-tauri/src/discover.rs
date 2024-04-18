@@ -5,7 +5,7 @@ pub async fn start_discovering() {
     let mdns = ServiceDaemon::new().expect("Failed to create daemon");
 
     // Browse for a service type.
-    let service_type = "_mdns-sd-my-test._udp.local.";
+    let service_type = "_dufs-mdns._udp.local.";
     let receiver = mdns.browse(service_type).expect("Failed to browse");
 
     // Receive the browse events in sync or async. Here is

@@ -8,7 +8,7 @@ const Client = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <div className="flex flex-col  bg-gray-100">
       <div className="bg-white shadow-md p-2">
         <ClientInput
           setIsSubmitted={setIsSubmitted}
@@ -18,7 +18,7 @@ const Client = () => {
           setPort={setPort}
         />
       </div>
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1">
         {isSubmitted && <ClientExplorer ip={ip} port={port} />}
       </div>
     </div>
