@@ -6,6 +6,7 @@ const ClientExplorer = ({ ip, port }) => {
   const [isFolder, setIsFolder] = useState(true);
   const [fileContent, setFileContent] = useState("");
   const [isFetchFailed, setIsFetchFailed] = useState(false);
+  const [filePath, setFilePath] = useState("/");
 
   useEffect(() => {
     // fetch(lastFetch ? lastFetch : `http://${ip}:${port}`)
@@ -24,16 +25,16 @@ const ClientExplorer = ({ ip, port }) => {
       });
   }, [ip, port, isFolder]);
 
-  const getFileContent = (p) => {
-    fetch(`http://${ip}:${port}${p}`)
-      .then((res) => res.text())
-      .then((data) => {
-        setFileContent(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  };
+  // const getFileContent = (p) => {
+  //   fetch(`http://${ip}:${port}${p}`)
+  //     .then((res) => res.text())
+  //     .then((data) => {
+  //       setFileContent(data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching data:", error);
+  //     });
+  // };
 
   return (
     <div className="flex flex-col   bg-gray-50">
@@ -41,21 +42,19 @@ const ClientExplorer = ({ ip, port }) => {
         <div className="flex-1 flex">
           <div className="w-1/3 bg-gray-200 h-[70vh] overflow-y-auto p-4">
             <FolderAndFiles
-              getFileContent={getFileContent}
+              // getFileContent={getFileContent}
               isFolder={true}
               name={"dufsRoot"}
-              p={"/"}
+              p={filePath}
               setFileContent={setFileContent}
               searchIp={ip}
               searchPort={port}
+              setFilePath={setFilePath}
               // setLastFetch={setLastFetch}
             />
           </div>
           <div className="w-2/3 bg-white ">
-            <FileViewer
-              getFileContent={getFileContent}
-              fileContent={fileContent}
-            />
+            <FileViewer fileUri={`http://${ip}:${port}${filePath}`} />
           </div>
         </div>
       ) : (

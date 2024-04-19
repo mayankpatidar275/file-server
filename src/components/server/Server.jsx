@@ -18,11 +18,13 @@ const Server = ({ server, setServer }) => {
   const command = Command.sidecar("../public/dufs", commandArgs); // sidecar also returns an instance of Command
 
   command.on("close", (data) => {
+    stopBroadcast();
     console.log(
       `command finished with code ${data.code} and signal ${data.signal}`
     );
   });
   command.on("error", (error) => {
+    stopBroadcast();
     console.error(`command error: "${error}"`);
   });
   command.stdout.on("data", (line) => {
@@ -76,6 +78,7 @@ const Server = ({ server, setServer }) => {
       if (!server) {
         const newServer = await command.spawn();
         setServer(newServer); // Set server state
+        startBroadcast();
       } else {
         console.log("already running");
       }
@@ -147,7 +150,7 @@ const Server = ({ server, setServer }) => {
         />
       </div>
 
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <input
           type="checkbox"
           id="cors"
@@ -158,7 +161,7 @@ const Server = ({ server, setServer }) => {
         <label htmlFor="cors" className="font-semibold">
           Enable CORS
         </label>
-      </div>
+      </div> */}
 
       <div className="mb-4">
         <input

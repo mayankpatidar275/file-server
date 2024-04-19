@@ -12,6 +12,7 @@
   "dependencies": {
     "@tauri-apps/api": "^1",
     "react": "^18.2.0",
+    "react-doc-viewer": "^0.1.5",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
