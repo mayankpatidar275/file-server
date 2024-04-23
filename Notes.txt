@@ -10,6 +10,10 @@ Advertise the ip and port on network
 Decide to make a website or desktop app for client side (discover).
 
 Get the last fetched path (store on click) -> this is to be at the same location after switching the tabs.
+ 
+Create a tree to store the requested links in order to persiste the data.
+
+Fileviewer content disappear on tab switching
 
 
 Decisions: 
