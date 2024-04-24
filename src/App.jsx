@@ -1,12 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import Navbar from "./components/navbar/Navbar";
 import Client from "./components/client/Client";
 import Server from "./components/server/Server";
+import { killAllServers } from "./utils";
 
 function App() {
   const [activeTab, setActiveTab] = useState("server");
-  const [server, setServer] = useState(null);
+  const [servers, setServers] = useState([]);
+
+  useEffect(() => {
+    return () => {
+      console.log("iside USEEFFECT");
+      killAllServers(servers);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col h-screen">
@@ -18,7 +26,7 @@ function App() {
       {/* Content container takes the rest of the height */}
       <div className="flex-1">
         <div className={activeTab === "server" ? "block" : "hidden"}>
-          <Server server={server} setServer={setServer} />
+          <Server servers={servers} setServers={setServers} />
         </div>
         <div className={activeTab === "client" ? "block" : "hidden"}>
           <Client />

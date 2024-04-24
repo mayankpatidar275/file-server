@@ -17,6 +17,7 @@ Fileviewer content disappear on tab switching
 
 Avoid using server state variable as a dependancy to start and stop the server. It can be null on reload. Causing issues
 
+store the service info and port in state only instead of getting port from user system 
 
 Decisions: 
 Central registry and deregistry of the service when server starts and stops.

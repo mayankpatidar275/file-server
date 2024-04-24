@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import React from "react";
 import { Command } from "@tauri-apps/api/shell";
+import { isPortAvailable } from "../../utils";
 
 // Go to shell.js and learn how to implement
-const Server = ({ server, setServer }) => {
+const Server = ({ servers, setServers }) => {
   // https://tauri.app/v1/api/js/shell/#restricting-access-to-the-command-apis
   // https://tauri.app/v1/guides/building/sidecar/#passing-arguments
 
@@ -14,7 +15,6 @@ const Server = ({ server, setServer }) => {
   const [enableCors, setEnableCors] = useState(true);
   const [allowAll, setAllowAll] = useState(true);
   const [commandArgs, setCommandArgs] = useState([]);
-  const [runningPorts, setRunningPorts] = useState([]);
 
   const command = Command.sidecar("../public/dufs", commandArgs); // sidecar also returns an instance of Command
 
@@ -65,17 +65,6 @@ const Server = ({ server, setServer }) => {
     }
   };
 
-  const fetchRunningPorts = async (line, uniquePorts) => {
-    if (line.startsWith("dufs")) {
-      const parts = line.split(":");
-      const port = parts[1].split(" ")[0];
-      console.log("dufs is running at port number: ", port);
-      uniquePorts.add(port);
-      const ports = Array.from(uniquePorts);
-      setRunningPorts(port);
-    }
-  };
-
   useEffect(() => {
     const argsList = [];
     if (allowAll) argsList.push("-A");
@@ -85,39 +74,14 @@ const Server = ({ server, setServer }) => {
     setCommandArgs(argsList);
   }, [allowAll, enableCors, port, servePath]);
 
-  // lsof -i -P -n | grep -w 'dufs.*LISTEN'
-
-  useEffect(() => {
-    const portsCmd = new Command("lsof", ["-i", "-P", "-n"]);
-    const uniquePorts = new Set();
-
-    portsCmd.on("close", (data) => {
-      console.log(
-        `command finished with code ${data.code} and signal ${data.signal}`
-      );
-    });
-    portsCmd.on("error", (error) => console.error(`command error: "${error}"`));
-    portsCmd.stdout.on("data", (line) => {
-      fetchRunningPorts(line, uniquePorts);
-    });
-    portsCmd.stderr.on("data", (line) =>
-      console.log(`command stderr: "${line}"`)
-    );
-
-    portsCmd.execute();
-
-    // Clean up
-    // return () => {
-    //   listDufsListenConnections.kill();
-    //   grepDufsListen.kill();
-    // };
-  }, []);
-
-  const handleRunServer = async () => {
+  const handleRunServer = async (_servers, _port, _path) => {
     try {
-      if (!server) {
+      if (isPortAvailable(_servers, _port)) {
         const newServer = await command.spawn();
-        setServer(newServer); // Set server state
+        setServers((prev) => [
+          ...prev,
+          { server: newServer, port: _port, path: _path },
+        ]);
         startBroadcast();
       } else {
         console.log("already running");
@@ -127,12 +91,16 @@ const Server = ({ server, setServer }) => {
     }
   };
 
-  const handleStopServer = async () => {
+  const handleStopServer = async (pid) => {
     try {
-      if (server) {
-        console.log("stoppinng server...", server);
-        await server.kill();
-        setServer(null);
+      if (pid) {
+        console.log("stoppinng server...");
+        const arr = [];
+        servers?.forEach((item) => {
+          if (item.server.pid != pid) arr.push(item);
+          else item.server.kill();
+        });
+        setServers(arr);
         console.log("Server stopped");
       } else {
         console.log("No running server");
@@ -147,8 +115,18 @@ const Server = ({ server, setServer }) => {
       <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-bold mb-4">Running Ports</h1>
         <ul>
-          {runningPorts.map((port) => (
-            <li key={port}>Port: {port}</li>
+          {servers?.map((item) => (
+            <li key={item?.server?.pid}>
+              Port: {item?.port} Path: {item?.path}
+              <button
+                onClick={() => {
+                  handleStopServer(item.server.pid);
+                }}
+                className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none"
+              >
+                Stop Server
+              </button>
+            </li>
           ))}
         </ul>
       </div>
@@ -207,22 +185,18 @@ const Server = ({ server, setServer }) => {
         </label>
       </div>
 
-      <div className="mb-4">
+      {/* <div className="mb-4">
         {server ? <div>Server running...</div> : <div>Click to run server</div>}
-      </div>
+      </div> */}
 
       <div className="flex space-x-4">
         <button
-          onClick={handleRunServer}
+          onClick={() => {
+            handleRunServer(servers, port, servePath);
+          }}
           className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
         >
           Run Server
-        </button>
-        <button
-          onClick={handleStopServer}
-          className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none"
-        >
-          Stop Server
         </button>
       </div>
     </div>
