@@ -18,7 +18,12 @@
         "sidecar": true,  
         "open": true ,
         "scope": [ 
-          { "name": "../public/dufs", "sidecar": true, "args": true}
+          { "name": "../public/dufs", "sidecar": true, "args": true},
+          {
+            "name": "lsof",
+            "cmd": "lsof",
+            "args": true
+          }
         ]
       }
     },

@@ -15,6 +15,8 @@ Create a tree to store the requested links in order to persiste the data.
 
 Fileviewer content disappear on tab switching
 
+Avoid using server state variable as a dependancy to start and stop the server. It can be null on reload. Causing issues
+
 
 Decisions: 
 Central registry and deregistry of the service when server starts and stops.

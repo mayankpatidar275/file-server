@@ -14,6 +14,7 @@ const Server = ({ server, setServer }) => {
   const [enableCors, setEnableCors] = useState(true);
   const [allowAll, setAllowAll] = useState(true);
   const [commandArgs, setCommandArgs] = useState([]);
+  const [runningPorts, setRunningPorts] = useState([]);
 
   const command = Command.sidecar("../public/dufs", commandArgs); // sidecar also returns an instance of Command
 
@@ -64,6 +65,17 @@ const Server = ({ server, setServer }) => {
     }
   };
 
+  const fetchRunningPorts = async (line, uniquePorts) => {
+    if (line.startsWith("dufs")) {
+      const parts = line.split(":");
+      const port = parts[1].split(" ")[0];
+      console.log("dufs is running at port number: ", port);
+      uniquePorts.add(port);
+      const ports = Array.from(uniquePorts);
+      setRunningPorts(port);
+    }
+  };
+
   useEffect(() => {
     const argsList = [];
     if (allowAll) argsList.push("-A");
@@ -72,6 +84,34 @@ const Server = ({ server, setServer }) => {
     if (servePath) argsList.push(servePath);
     setCommandArgs(argsList);
   }, [allowAll, enableCors, port, servePath]);
+
+  // lsof -i -P -n | grep -w 'dufs.*LISTEN'
+
+  useEffect(() => {
+    const portsCmd = new Command("lsof", ["-i", "-P", "-n"]);
+    const uniquePorts = new Set();
+
+    portsCmd.on("close", (data) => {
+      console.log(
+        `command finished with code ${data.code} and signal ${data.signal}`
+      );
+    });
+    portsCmd.on("error", (error) => console.error(`command error: "${error}"`));
+    portsCmd.stdout.on("data", (line) => {
+      fetchRunningPorts(line, uniquePorts);
+    });
+    portsCmd.stderr.on("data", (line) =>
+      console.log(`command stderr: "${line}"`)
+    );
+
+    portsCmd.execute();
+
+    // Clean up
+    // return () => {
+    //   listDufsListenConnections.kill();
+    //   grepDufsListen.kill();
+    // };
+  }, []);
 
   const handleRunServer = async () => {
     try {
@@ -104,24 +144,15 @@ const Server = ({ server, setServer }) => {
 
   return (
     <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <button
-        onClick={startBroadcast}
-        className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none"
-      >
-        Start Broadcast
-      </button>
-      <button
-        onClick={stopBroadcast}
-        className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none"
-      >
-        Stop Broadcast
-      </button>
-      <button
-        onClick={startDiscovering}
-        className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none"
-      >
-        Start Discovering
-      </button>
+      <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold mb-4">Running Ports</h1>
+        <ul>
+          {runningPorts.map((port) => (
+            <li key={port}>Port: {port}</li>
+          ))}
+        </ul>
+      </div>
+
       <h1 className="text-2xl font-bold mb-4">Server Setup</h1>
 
       <div className="mb-4">
