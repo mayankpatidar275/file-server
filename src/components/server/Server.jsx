@@ -18,22 +18,34 @@ const Server = ({ servers, setServers }) => {
 
   const command = Command.sidecar("../public/dufs", commandArgs); // sidecar also returns an instance of Command
 
-  command.on("close", (data) => {
-    stopBroadcast();
-    console.log(
-      `command finished with code ${data.code} and signal ${data.signal}`
-    );
-  });
-  command.on("error", (error) => {
-    stopBroadcast();
-    console.error(`command error: "${error}"`);
-  });
-  command.stdout.on("data", (line) => {
-    console.log(`command stdout: "${line}"`);
-  });
-  command.stderr.on("data", (line) => {
-    console.log(`command stderr: "${line}"`);
-  });
+  const setupCommandListeners = (_command, _port, _path, _newServer) => {
+    _command.on("close", (data) => {
+      stopBroadcast();
+      console.log(
+        `command finished with code ${data.code} and signal ${data.signal}`
+      );
+    });
+
+    _command.on("error", (error) => {
+      stopBroadcast();
+      console.error(`command error: "${error}"`);
+    });
+
+    _command.stdout.on("data", (line) => {
+      console.log(`command stdout: "${line}"`);
+      // Check if the line contains the desired text
+      if (line.includes("Listening on:")) {
+        setServers((prev) => [
+          ...prev,
+          { server: _newServer, port: _port, path: _path },
+        ]);
+      }
+    });
+
+    _command.stderr.on("data", (line) => {
+      console.log(`command stderr: "${line}"`);
+    });
+  };
 
   const startBroadcast = async () => {
     // Start broadcasting
@@ -76,12 +88,15 @@ const Server = ({ servers, setServers }) => {
 
   const handleRunServer = async (_servers, _port, _path) => {
     try {
+      // isPortAvailable check is not necceassary, instead check using the output of newServer
       if (isPortAvailable(_servers, _port)) {
         const newServer = await command.spawn();
-        setServers((prev) => [
-          ...prev,
-          { server: newServer, port: _port, path: _path },
-        ]);
+        console.log(newServer);
+        setupCommandListeners(command, _port, _path, newServer);
+        // setServers((prev) => [
+        //   ...prev,
+        //   { server: newServer, port: _port, path: _path },
+        // ]);
         startBroadcast();
       } else {
         console.log("already running");
