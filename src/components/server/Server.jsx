@@ -126,95 +126,102 @@ const Server = ({ servers, setServers }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold mb-4">Running Ports</h1>
-        <ul>
-          {servers?.map((item) => (
-            <li key={item?.server?.pid}>
-              Port: {item?.port} Path: {item?.path}
-              <button
-                onClick={() => {
-                  handleStopServer(item.server.pid);
-                }}
-                className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none"
+    <>
+      {servers.length > 0 ? (
+        <div className="w-screen mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+          <ul>
+            {servers?.map((item, index) => (
+              <li
+                key={item?.server?.pid}
+                className={`flex items-center justify-between mb-4 ${
+                  index !== servers.length - 1
+                    ? "border-b border-gray-200 pb-4"
+                    : ""
+                }`}
               >
-                Stop Server
-              </button>
-            </li>
-          ))}
-        </ul>
+                <div className="flex items-center">
+                  <p className="text-base text-green-600 mr-2">Serving:</p>
+                  <p className="text-base text-gray-900 font-semibold">
+                    {item?.path}
+                  </p>
+                  <div className="w-4"></div> {/* Add a gap */}
+                  <p className="text-base text-gray-600 mx-2">at port</p>
+                  <p className="text-base text-gray-900 font-semibold">
+                    {item?.port}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => {
+                    handleStopServer(item.server.pid);
+                  }}
+                  className="text-white py-2 px-4 rounded-md  focus:outline-none flex items-center"
+                >
+                  ❌
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <div className="w-screen mx-auto mt-8 p-6 bg-white rounded-lg shadow-md text-center text-gray-600">
+          No server running
+        </div>
+      )}
+      <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold mb-4">Server Setup</h1>
+
+        <div className="mb-4">
+          <label htmlFor="servePath" className="block font-semibold mb-2">
+            Serve Path
+          </label>
+          <input
+            type="text"
+            value={servePath}
+            onChange={(e) => setServePath(e.target.value)}
+            placeholder="Serve Path"
+            className="w-full border rounded-md px-4 py-2 focus:outline-none focus:border-blue-500"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="port" className="block font-semibold mb-2">
+            Port
+          </label>
+          <input
+            type="text"
+            value={port}
+            onChange={(e) => setPort(e.target.value)}
+            placeholder="Port"
+            className="w-full border rounded-md px-4 py-2 focus:outline-none focus:border-blue-500"
+          />
+        </div>
+
+        <div className="mb-4">
+          <input
+            type="checkbox"
+            id="allowAll"
+            checked={allowAll}
+            onChange={(e) => setAllowAll(e.target.checked)}
+            className="mr-2"
+          />
+          <label htmlFor="allowAll" className="font-semibold">
+            Allow all operations
+          </label>
+        </div>
+
+        <div className="flex justify-center">
+          <button
+            onClick={() => {
+              handleRunServer(servers, port, servePath);
+            }}
+            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
+          >
+            Run Server
+          </button>
+        </div>
       </div>
-
-      <h1 className="text-2xl font-bold mb-4">Server Setup</h1>
-
-      <div className="mb-4">
-        <label htmlFor="servePath" className="block font-semibold mb-2">
-          Serve Path
-        </label>
-        <input
-          type="text"
-          value={servePath}
-          onChange={(e) => setServePath(e.target.value)}
-          placeholder="Serve Path"
-          className="w-full border rounded-md px-4 py-2 focus:outline-none focus:border-blue-500"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="port" className="block font-semibold mb-2">
-          Port
-        </label>
-        <input
-          type="text"
-          value={port}
-          onChange={(e) => setPort(e.target.value)}
-          placeholder="Port"
-          className="w-full border rounded-md px-4 py-2 focus:outline-none focus:border-blue-500"
-        />
-      </div>
-
-      {/* <div className="mb-4">
-        <input
-          type="checkbox"
-          id="cors"
-          checked={enableCors}
-          onChange={(e) => setEnableCors(e.target.checked)}
-          className="mr-2"
-        />
-        <label htmlFor="cors" className="font-semibold">
-          Enable CORS
-        </label>
-      </div> */}
-
-      <div className="mb-4">
-        <input
-          type="checkbox"
-          id="allowAll"
-          checked={allowAll}
-          onChange={(e) => setAllowAll(e.target.checked)}
-          className="mr-2"
-        />
-        <label htmlFor="allowAll" className="font-semibold">
-          Allow all operations
-        </label>
-      </div>
-
-      {/* <div className="mb-4">
-        {server ? <div>Server running...</div> : <div>Click to run server</div>}
-      </div> */}
-
-      <div className="flex space-x-4">
-        <button
-          onClick={() => {
-            handleRunServer(servers, port, servePath);
-          }}
-          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
-        >
-          Run Server
-        </button>
-      </div>
-    </div>
+    </>
   );
 };
 

@@ -54,7 +54,13 @@ const ClientExplorer = ({ ip, port }) => {
             />
           </div>
           <div className="w-2/3 bg-white ">
-            <FileViewer fileUri={`http://${ip}:${port}${filePath}`} />
+            {filePath !== "/" ? (
+              <FileViewer fileUri={`http://${ip}:${port}${filePath}`} />
+            ) : (
+              <div className="flex justify-center items-center h-screen  ">
+                No file selected
+              </div>
+            )}
           </div>
         </div>
       ) : (
