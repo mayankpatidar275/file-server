@@ -229,14 +229,14 @@ const Server = ({ servers, setServers }) => {
         </div>
 
         <div className="flex justify-center">
-          <button
+          {/* <button
             onClick={() => {
               startDiscovering();
             }}
             className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
           >
             discover Server
-          </button>
+          </button> */}
           <button
             onClick={() => {
               handleRunServer(servers, port, servePath);
