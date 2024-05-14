@@ -20,14 +20,14 @@ const Server = ({ servers, setServers }) => {
 
   const setupCommandListeners = (_command, _port, _path, _newServer) => {
     _command.on("close", (data) => {
-      stopBroadcast();
+      // stopBroadcast(_newServer.pid.toString(), _port);
       console.log(
         `command finished with code ${data.code} and signal ${data.signal}`
       );
     });
 
     _command.on("error", (error) => {
-      stopBroadcast();
+      // stopBroadcast(_newServer.pid.toString(), _port);
       console.error(`command error: "${error}"`);
     });
 
@@ -39,28 +39,39 @@ const Server = ({ servers, setServers }) => {
           ...prev,
           { server: _newServer, port: _port, path: _path },
         ]);
+        startBroadcast(_newServer.pid.toString(), _port);
       }
     });
 
     _command.stderr.on("data", (line) => {
+      // stopBroadcast(_newServer.pid.toString(), _port);
       console.log(`command stderr: "${line}"`);
     });
   };
 
-  const startBroadcast = async () => {
+  const startBroadcast = async (instance_name, port) => {
     // Start broadcasting
+    // Convert port to u16
+    const port_number = parseInt(port, 10);
     try {
-      await invoke("start_broadcasting");
+      await invoke("start_broadcasting", {
+        instanceName: instance_name,
+        port: port_number,
+      });
       console.log("Broadcasting started");
     } catch (error) {
       console.error("Error starting broadcasting:", error);
     }
   };
 
-  const stopBroadcast = async () => {
+  const stopBroadcast = async (instance_name, port) => {
     // Stop broadcasting
+    const port_number = parseInt(port, 10);
     try {
-      await invoke("stop_broadcasting");
+      await invoke("stop_broadcasting", {
+        instanceName: instance_name,
+        port: port_number,
+      });
       console.log("Broadcasting stoped");
     } catch (error) {
       console.error("Error stoping broadcasting:", error);
@@ -68,12 +79,13 @@ const Server = ({ servers, setServers }) => {
   };
 
   const startDiscovering = async () => {
-    // Start discovering
     try {
-      await invoke("start_discovering");
-      console.log("Discovering started");
+      console.log("discovering...");
+      const discoveredServices = await invoke("start_discovering");
+      console.log("Discovered services:", discoveredServices);
+      // Handle the discovered services here
     } catch (error) {
-      console.error("Error starting discovering:", error);
+      console.error("Error starting discovery:", error);
     }
   };
 
@@ -89,7 +101,9 @@ const Server = ({ servers, setServers }) => {
   const handleRunServer = async (_servers, _port, _path) => {
     try {
       // isPortAvailable check is not necceassary, instead check using the output of newServer
+      // console.log("servers: ", _servers);
       if (isPortAvailable(_servers, _port)) {
+        console.log("starting new server...");
         const newServer = await command.spawn();
         console.log(newServer);
         setupCommandListeners(command, _port, _path, newServer);
@@ -97,7 +111,7 @@ const Server = ({ servers, setServers }) => {
         //   ...prev,
         //   { server: newServer, port: _port, path: _path },
         // ]);
-        startBroadcast();
+        // startBroadcast();
       } else {
         console.log("already running");
       }
@@ -124,6 +138,10 @@ const Server = ({ servers, setServers }) => {
       console.log("error stopping the server: ", error);
     }
   };
+
+  useEffect(() => {
+    console.log("servers: ", servers);
+  }, [servers]);
 
   return (
     <>
@@ -211,6 +229,14 @@ const Server = ({ servers, setServers }) => {
         </div>
 
         <div className="flex justify-center">
+          <button
+            onClick={() => {
+              startDiscovering();
+            }}
+            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
+          >
+            discover Server
+          </button>
           <button
             onClick={() => {
               handleRunServer(servers, port, servePath);
