@@ -1,6 +1,7 @@
 use mdns_sd::{ServiceDaemon, ServiceEvent, ServiceInfo};
 use serde::Serialize;
 use std::sync::{Arc, Mutex};
+use std::time::{Duration, Instant};
 
 #[derive(Debug, Clone, Serialize)]
 pub struct DiscoveredService {
@@ -28,32 +29,36 @@ pub fn start_discovering(service_type: String) -> Vec<DiscoveredService> {
     let discovered_services: Arc<Mutex<Vec<DiscoveredService>>> = Arc::new(Mutex::new(Vec::new()));
     let discovered_services_clone = discovered_services.clone();
 
-    // let now = Instant::now();
-    while let Ok(event) = receiver.recv() {
-        match event {
-            ServiceEvent::ServiceResolved(info) => {
-                println!("Service resolved: {:?}", &info);
+    let timeout_duration = Duration::from_secs(4);
+    let start_time = Instant::now();
 
-                let discovered_service = DiscoveredService {
-                    name: info.get_fullname().to_string(),
-                    host: info.get_hostname().to_string(),
-                    port: info.get_port(),
-                    addresses: info
-                        .get_addresses()
-                        .iter()
-                        .map(|addr| addr.to_string())
-                        .collect(),
-                    properties: extract_properties(&info),
-                };
+    while Instant::now().duration_since(start_time) < timeout_duration {
+        if let Ok(event) = receiver.recv_timeout(timeout_duration) {
+            match event {
+                ServiceEvent::ServiceResolved(info) => {
+                    println!("Service resolved: {:?}", &info);
 
-                println!("Discovered service: {:?}", &discovered_service);
+                    let discovered_service = DiscoveredService {
+                        name: info.get_fullname().to_string(),
+                        host: info.get_hostname().to_string(),
+                        port: info.get_port(),
+                        addresses: info
+                            .get_addresses()
+                            .iter()
+                            .map(|addr| addr.to_string())
+                            .collect(),
+                        properties: extract_properties(&info),
+                    };
 
-                discovered_services_clone
-                    .lock()
-                    .unwrap()
-                    .push(discovered_service);
+                    println!("Discovered service: {:?}", &discovered_service);
+
+                    discovered_services_clone
+                        .lock()
+                        .unwrap()
+                        .push(discovered_service);
+                }
+                _ => {}
             }
-            _ => {}
         }
     }
 
