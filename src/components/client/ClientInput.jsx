@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-import Modal from "react-modal";
 
 const ClientInput = ({ ip, port, setIp, setPort, handleFormSubmit }) => {
   const [discoveredServices, setDiscoveredServices] = useState([]);
   const [showServices, setShowServices] = useState(false);
+  const [loader, setLoader] = useState(false);
+
+  // Ref for the modal content
+  const modalRef = useRef(null);
 
   const handleIpChange = (e) => {
     setIp(e.target.value);
@@ -14,35 +17,54 @@ const ClientInput = ({ ip, port, setIp, setPort, handleFormSubmit }) => {
     setPort(e.target.value);
   };
 
-  useEffect(() => {
-    const startDiscovering = async () => {
-      try {
-        console.log("discovering...");
-        const services = await invoke("start_discovering");
-        console.log("Discovered services:", services);
-        const uniqueServices = services.reduce((acc, current) => {
-          const x = acc.find((item) => item.name === current.name);
-          if (!x) {
-            return acc.concat([current]);
-          } else {
-            return acc;
-          }
-        }, []);
-        setDiscoveredServices(uniqueServices);
-      } catch (error) {
-        console.error("Error starting discovery:", error);
-      }
-    };
-
-    startDiscovering();
-  }, []);
+  const handleModalOpen = async () => {
+    setShowServices(true); // Open modal first
+    try {
+      setLoader(true);
+      const services = await invoke("start_discovering");
+      const uniqueServices = services.reduce((acc, current) => {
+        const x = acc.find((item) => item.name === current.name);
+        if (!x) {
+          return acc.concat([current]);
+        } else {
+          return acc;
+        }
+      }, []);
+      setDiscoveredServices(uniqueServices);
+    } catch (error) {
+      console.error("Error starting discovery:", error);
+    } finally {
+      setLoader(false);
+    }
+  };
 
   const handleServiceSelect = (service) => {
     setIp(service.addresses[0]); // Assuming the first address is the desired one
     setPort(service.port);
-    setShowServices(false);
+    setShowServices(false); // Close modal
     handleFormSubmit(); // Trigger the form submission
   };
+
+  // Handle clicking outside the modal
+  const handleOutsideClick = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      setShowServices(false); // Close modal
+    }
+  };
+
+  useEffect(() => {
+    if (showServices) {
+      // Add event listener to detect clicks outside the modal
+      document.addEventListener("mousedown", handleOutsideClick);
+    } else {
+      // Remove event listener when modal is closed
+      document.removeEventListener("mousedown", handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [showServices]);
 
   return (
     <div>
@@ -69,42 +91,48 @@ const ClientInput = ({ ip, port, setIp, setPort, handleFormSubmit }) => {
         </button>
         <button
           type="button"
-          onClick={() => setShowServices(true)}
+          onClick={handleModalOpen} // Open modal and trigger discovery
           className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3 rounded text-sm"
         >
-          Discovered Services
+          Select Service
         </button>
       </form>
 
-      <Modal
-        isOpen={showServices}
-        onRequestClose={() => setShowServices(false)}
-        contentLabel="Discovered Services"
-        className="fixed inset-0 flex items-center justify-center z-50"
-        overlayClassName="fixed inset-0 bg-black bg-opacity-50"
-      >
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
-          <h3 className="text-lg font-bold mb-4">Discovered Services:</h3>
-          <ul className="space-y-2">
-            {discoveredServices.map((service, index) => (
-              <li key={index}>
-                <button
-                  onClick={() => handleServiceSelect(service)}
-                  className="text-blue-500 underline"
-                >
-                  {service.addresses[0]}:{service.port}
-                </button>
-              </li>
-            ))}
-          </ul>
-          <button
-            onClick={() => setShowServices(false)}
-            className="mt-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-3 rounded text-sm"
+      {showServices && (
+        <div className="fixed  inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div
+            ref={modalRef} // Attach the ref to the modal content
+            className="bg-white p-6 rounded-lg shadow-lg w-[100%] max-w-md mx-auto relative"
           >
-            Close
-          </button>
+            <button
+              onClick={() => setShowServices(false)} // Close modal on X button click
+              className="absolute top-2 right-4 text-gray-500 hover:text-gray-700"
+            >
+              &#x2715;
+            </button>
+            <h3 className="text-lg font-bold mb-4">Select Service</h3>
+            {loader ? (
+              "fetching..."
+            ) : (
+              <ul className="space-y-2">
+                {discoveredServices.length !== 0
+                  ? discoveredServices.map((service, index) => (
+                      <li key={index}>
+                        {service.path}
+                        <button
+                          onClick={() => handleServiceSelect(service)}
+                          className="text-blue-500 underline"
+                        >
+                          {service.addresses[0]}:{service.port}
+                        </button>
+                      </li>
+                    ))
+                  : "No server running"}
+              </ul>
+            )}
+          </div>
         </div>
-      </Modal>
+      )}
     </div>
   );
 };

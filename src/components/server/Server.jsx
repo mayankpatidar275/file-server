@@ -3,6 +3,10 @@ import { invoke } from "@tauri-apps/api/tauri";
 import React from "react";
 import { Command } from "@tauri-apps/api/shell";
 import { isPortAvailable } from "../../utils";
+import { open } from "@tauri-apps/api/dialog"; // Import the dialog API
+import toast from "react-hot-toast";
+
+const MAX_SERVERS_LIMIT = 2;
 
 // Go to shell.js and learn how to implement
 const Server = ({ servers, setServers }) => {
@@ -10,7 +14,7 @@ const Server = ({ servers, setServers }) => {
   // https://tauri.app/v1/guides/building/sidecar/#passing-arguments
 
   // arguments
-  const [servePath, setServePath] = useState("/home/mayank/Documents/");
+  const [servePath, setServePath] = useState("/");
   const [port, setPort] = useState("5000");
   const [enableCors, setEnableCors] = useState(true);
   const [allowAll, setAllowAll] = useState(true);
@@ -24,11 +28,13 @@ const Server = ({ servers, setServers }) => {
       console.log(
         `command finished with code ${data.code} and signal ${data.signal}`
       );
+      toast.error(`Closed the process running at port ${_port} `);
     });
 
     _command.on("error", (error) => {
       // stopBroadcast(_newServer.pid.toString(), _port);
       console.error(`command error: "${error}"`);
+      toast.error(`Error in process running at port ${_port} `);
     });
 
     _command.stdout.on("data", (line) => {
@@ -100,6 +106,9 @@ const Server = ({ servers, setServers }) => {
 
   const handleRunServer = async (_servers, _port, _path) => {
     try {
+      if (_servers.length >= MAX_SERVERS_LIMIT) {
+        return toast.error(`Maximum servers limit reached`);
+      }
       // isPortAvailable check is not necceassary, instead check using the output of newServer
       // console.log("servers: ", _servers);
       if (isPortAvailable(_servers, _port)) {
@@ -113,7 +122,8 @@ const Server = ({ servers, setServers }) => {
         // ]);
         // startBroadcast();
       } else {
-        console.log("already running");
+        console.log("Already running at this port");
+        toast.error("Already running at this port");
       }
     } catch (error) {
       console.log("error starting the server: ", error);
@@ -136,6 +146,21 @@ const Server = ({ servers, setServers }) => {
       }
     } catch (error) {
       console.log("error stopping the server: ", error);
+    }
+  };
+
+  // Function to open the folder picker
+  const handleSelectPath = async () => {
+    try {
+      const selected = await open({
+        directory: true, // restrict the dialog to only directories
+        multiple: false, // allow only one selection
+      });
+      if (selected) {
+        setServePath(selected);
+      }
+    } catch (error) {
+      console.error("Error selecting folder:", error);
     }
   };
 
@@ -162,7 +187,7 @@ const Server = ({ servers, setServers }) => {
                   <p className="text-base text-gray-900 font-semibold">
                     {item?.path}
                   </p>
-                  <div className="w-4"></div> {/* Add a gap */}
+                  <div className="w-4"></div>
                   <p className="text-base text-gray-600 mx-2">at port</p>
                   <p className="text-base text-gray-900 font-semibold">
                     {item?.port}
@@ -170,9 +195,7 @@ const Server = ({ servers, setServers }) => {
                 </div>
 
                 <button
-                  onClick={() => {
-                    handleStopServer(item.server.pid);
-                  }}
+                  onClick={() => handleStopServer(item.server.pid)}
                   className="text-white py-2 px-4 rounded-md  focus:outline-none flex items-center"
                 >
                   ❌
@@ -193,13 +216,21 @@ const Server = ({ servers, setServers }) => {
           <label htmlFor="servePath" className="block font-semibold mb-2">
             Serve Path
           </label>
-          <input
-            type="text"
-            value={servePath}
-            onChange={(e) => setServePath(e.target.value)}
-            placeholder="Serve Path"
-            className="w-full border rounded-md px-4 py-2 focus:outline-none focus:border-blue-500"
-          />
+          <div className="flex">
+            <input
+              type="text"
+              value={servePath}
+              onChange={(e) => setServePath(e.target.value)}
+              placeholder="Serve Path"
+              className="w-full border rounded-md px-4 py-2 focus:outline-none focus:border-blue-500"
+            />
+            <button
+              onClick={handleSelectPath}
+              className="ml-2 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
+            >
+              📁
+            </button>
+          </div>
         </div>
 
         <div className="mb-4">
@@ -238,9 +269,7 @@ const Server = ({ servers, setServers }) => {
             discover Server
           </button> */}
           <button
-            onClick={() => {
-              handleRunServer(servers, port, servePath);
-            }}
+            onClick={() => handleRunServer(servers, port, servePath)}
             className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
           >
             Run Server

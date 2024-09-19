@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import Navbar from "./components/navbar/Navbar";
+import { Toaster } from "react-hot-toast";
 import Client from "./components/client/Client";
 import Server from "./components/server/Server";
 import { killAllServers } from "./utils";
@@ -28,6 +29,7 @@ function App() {
 
   return (
     <div className="flex flex-col h-screen">
+      <Toaster />
       {/* Navbar with a certain height */}
       <div>
         <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
