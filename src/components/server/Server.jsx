@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
-import React from "react";
-import { Command } from "@tauri-apps/api/shell";
-import { isPortAvailable } from "../../utils";
 import { open } from "@tauri-apps/api/dialog"; // Import the dialog API
+import { Command } from "@tauri-apps/api/shell";
+import { invoke } from "@tauri-apps/api/tauri";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { isPortAvailable } from "../../utils";
 
 const MAX_SERVERS_LIMIT = 2;
 
@@ -28,13 +27,12 @@ const Server = ({ servers, setServers }) => {
       console.log(
         `command finished with code ${data.code} and signal ${data.signal}`
       );
-      toast.error(`Closed the process running at port ${_port} `);
     });
 
     _command.on("error", (error) => {
       // stopBroadcast(_newServer.pid.toString(), _port);
       console.error(`command error: "${error}"`);
-      toast.error(`Error in process running at port ${_port} `);
+      toast.error(`Please check your path and port`);
     });
 
     _command.stdout.on("data", (line) => {
@@ -46,12 +44,19 @@ const Server = ({ servers, setServers }) => {
           { server: _newServer, port: _port, path: _path },
         ]);
         startBroadcast(_newServer.pid.toString(), _port);
+        toast.success(`Server started successfully`);
       }
     });
 
     _command.stderr.on("data", (line) => {
       // stopBroadcast(_newServer.pid.toString(), _port);
       console.log(`command stderr: "${line}"`);
+      if (line.includes("Address already in use")) {
+        return toast.error("Port already in use");
+      }
+      if (line.includes("doesn't exist")) {
+        return toast.error("Path does not exists");
+      }
     });
   };
 
@@ -70,30 +75,30 @@ const Server = ({ servers, setServers }) => {
     }
   };
 
-  const stopBroadcast = async (instance_name, port) => {
-    // Stop broadcasting
-    const port_number = parseInt(port, 10);
-    try {
-      await invoke("stop_broadcasting", {
-        instanceName: instance_name,
-        port: port_number,
-      });
-      console.log("Broadcasting stoped");
-    } catch (error) {
-      console.error("Error stoping broadcasting:", error);
-    }
-  };
+  // const stopBroadcast = async (instance_name, port) => {
+  //   // Stop broadcasting
+  //   const port_number = parseInt(port, 10);
+  //   try {
+  //     await invoke("stop_broadcasting", {
+  //       instanceName: instance_name,
+  //       port: port_number,
+  //     });
+  //     console.log("Broadcasting stoped");
+  //   } catch (error) {
+  //     console.error("Error stoping broadcasting:", error);
+  //   }
+  // };
 
-  const startDiscovering = async () => {
-    try {
-      console.log("discovering...");
-      const discoveredServices = await invoke("start_discovering");
-      console.log("Discovered services:", discoveredServices);
-      // Handle the discovered services here
-    } catch (error) {
-      console.error("Error starting discovery:", error);
-    }
-  };
+  // const startDiscovering = async () => {
+  //   try {
+  //     console.log("discovering...");
+  //     const discoveredServices = await invoke("start_discovering");
+  //     console.log("Discovered services:", discoveredServices);
+  //     // Handle the discovered services here
+  //   } catch (error) {
+  //     console.error("Error starting discovery:", error);
+  //   }
+  // };
 
   useEffect(() => {
     const argsList = [];
@@ -108,6 +113,12 @@ const Server = ({ servers, setServers }) => {
     try {
       if (_servers.length >= MAX_SERVERS_LIMIT) {
         return toast.error(`Maximum servers limit reached`);
+      }
+      if (!_port) {
+        return toast.error(`Please enter the Port`);
+      }
+      if (!_path) {
+        return toast.error(`Please enter the Path`);
       }
       // isPortAvailable check is not necceassary, instead check using the output of newServer
       // console.log("servers: ", _servers);
@@ -141,10 +152,13 @@ const Server = ({ servers, setServers }) => {
         });
         setServers(arr);
         console.log("Server stopped");
+        return toast.success("Server stopped successfully");
       } else {
         console.log("No running server");
+        return toast.error("No running server with this pid");
       }
     } catch (error) {
+      toast.error("Error stopping the server");
       console.log("error stopping the server: ", error);
     }
   };

@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
+import React, { useEffect, useRef, useState } from "react";
 
 const ClientInput = ({ ip, port, setIp, setPort, handleFormSubmit }) => {
   const [discoveredServices, setDiscoveredServices] = useState([]);
@@ -68,7 +68,20 @@ const ClientInput = ({ ip, port, setIp, setPort, handleFormSubmit }) => {
 
   return (
     <div>
-      <form onSubmit={handleFormSubmit} className="flex items-center space-x-4">
+      <form
+        onSubmit={(e) => {
+          handleFormSubmit(e); // Pass event to handleFormSubmit
+        }}
+        className="flex mx-auto w-full justify-center items-center space-x-4"
+      >
+        <button
+          type="button"
+          onClick={handleModalOpen} // Open modal and trigger discovery
+          className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3 rounded text-sm"
+        >
+          Select Server
+        </button>
+        <span>or</span>
         <input
           type="text"
           value={ip}
@@ -89,28 +102,21 @@ const ClientInput = ({ ip, port, setIp, setPort, handleFormSubmit }) => {
         >
           Start
         </button>
-        <button
-          type="button"
-          onClick={handleModalOpen} // Open modal and trigger discovery
-          className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3 rounded text-sm"
-        >
-          Select Service
-        </button>
       </form>
 
       {showServices && (
-        <div className="fixed  inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
           <div
             ref={modalRef} // Attach the ref to the modal content
             className="bg-white p-6 rounded-lg shadow-lg w-[100%] max-w-md mx-auto relative"
           >
             <button
-              onClick={() => setShowServices(false)} // Close modal on X button click
+              onClick={() => setShowServices(false)}
               className="absolute top-2 right-4 text-gray-500 hover:text-gray-700"
             >
               &#x2715;
             </button>
-            <h3 className="text-lg font-bold mb-4">Select Service</h3>
+            <h3 className="text-lg font-bold mb-4">Select Server</h3>
             {loader ? (
               "fetching..."
             ) : (

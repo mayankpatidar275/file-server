@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import ClientInput from "./ClientInput";
 import ClientExplorer from "./ClientExplorer";
+import ClientInput from "./ClientInput";
 
 const Client = () => {
-  const [ip, setIp] = useState("127.0.0.1");
-  const [port, setPort] = useState("5000");
+  const [ip, setIp] = useState("");
+  const [port, setPort] = useState("");
   const [clientExplorerKey, setClientExplorerKey] = useState(0);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    console.log("form submit called");
     setClientExplorerKey((prevKey) => prevKey + 1);
   };
 
@@ -28,7 +29,7 @@ const Client = () => {
           <ClientExplorer key={clientExplorerKey} ip={ip} port={port} />
         ) : (
           <div className="flex justify-center items-center h-screen  ">
-            Click start to fetch
+            No server selected
           </div>
         )}
       </div>

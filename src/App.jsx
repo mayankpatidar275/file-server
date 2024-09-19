@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
-import "./App.css";
-import Navbar from "./components/navbar/Navbar";
 import { Toaster } from "react-hot-toast";
+import "./App.css";
 import Client from "./components/client/Client";
+import Navbar from "./components/navbar/Navbar";
 import Server from "./components/server/Server";
 import { killAllServers } from "./utils";
 
 function App() {
   const [activeTab, setActiveTab] = useState("server");
   const [servers, setServers] = useState([]);
+
+  const handleContextMenu = (event) => {
+    event.preventDefault();
+  };
 
   // useEffect hook to run when component unmounts
   useEffect(() => {
@@ -28,7 +32,7 @@ function App() {
   }, [servers]); // Run the cleanup function whenever servers array changes
 
   return (
-    <div className="flex flex-col h-screen">
+    <div onContextMenu={handleContextMenu} className="flex flex-col h-screen">
       <Toaster />
       {/* Navbar with a certain height */}
       <div>
