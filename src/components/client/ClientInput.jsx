@@ -9,13 +9,13 @@ const ClientInput = ({ ip, port, setIp, setPort, handleFormSubmit }) => {
   // Ref for the modal content
   const modalRef = useRef(null);
 
-  const handleIpChange = (e) => {
-    setIp(e.target.value);
-  };
+  // const handleIpChange = (e) => {
+  //   setIp(e.target.value);
+  // };
 
-  const handlePortChange = (e) => {
-    setPort(e.target.value);
-  };
+  // const handlePortChange = (e) => {
+  //   setPort(e.target.value);
+  // };
 
   const handleModalOpen = async () => {
     setShowServices(true); // Open modal first
@@ -23,7 +23,12 @@ const ClientInput = ({ ip, port, setIp, setPort, handleFormSubmit }) => {
       setLoader(true);
       const services = await invoke("start_discovering");
       const uniqueServices = services.reduce((acc, current) => {
-        const x = acc.find((item) => item.name === current.name);
+        // const x = acc.find((item) => item.name === current.name);
+        const x = acc.find(
+          (item) =>
+            item.addresses[0] === current.addresses[0] &&
+            item.port === current.port
+        );
         if (!x) {
           return acc.concat([current]);
         } else {
@@ -81,7 +86,7 @@ const ClientInput = ({ ip, port, setIp, setPort, handleFormSubmit }) => {
         >
           Select Server
         </button>
-        <span>or</span>
+        {/* <span>or</span>
         <input
           type="text"
           value={ip}
@@ -101,7 +106,7 @@ const ClientInput = ({ ip, port, setIp, setPort, handleFormSubmit }) => {
           className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded text-sm"
         >
           Start
-        </button>
+        </button> */}
       </form>
 
       {showServices && (
@@ -118,7 +123,7 @@ const ClientInput = ({ ip, port, setIp, setPort, handleFormSubmit }) => {
             </button>
             <h3 className="text-lg font-bold mb-4">Select Server</h3>
             {loader ? (
-              "fetching..."
+              "Please wait few seconds..."
             ) : (
               <ul className="space-y-2">
                 {discoveredServices.length !== 0

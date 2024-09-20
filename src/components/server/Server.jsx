@@ -13,8 +13,8 @@ const Server = ({ servers, setServers }) => {
   // https://tauri.app/v1/guides/building/sidecar/#passing-arguments
 
   // arguments
-  const [servePath, setServePath] = useState("/");
-  const [port, setPort] = useState("5000");
+  const [servePath, setServePath] = useState("");
+  const [port, setPort] = useState("5001");
   const [enableCors, setEnableCors] = useState(true);
   const [allowAll, setAllowAll] = useState(true);
   const [commandArgs, setCommandArgs] = useState([]);
@@ -235,7 +235,7 @@ const Server = ({ servers, setServers }) => {
               type="text"
               value={servePath}
               onChange={(e) => setServePath(e.target.value)}
-              placeholder="Serve Path"
+              placeholder="Enter path to share..."
               className="w-full border rounded-md px-4 py-2 focus:outline-none focus:border-blue-500"
             />
             <button

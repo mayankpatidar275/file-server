@@ -8,8 +8,7 @@ const Client = () => {
   const [clientExplorerKey, setClientExplorerKey] = useState(0);
 
   const handleFormSubmit = (e) => {
-    e.preventDefault();
-    console.log("form submit called");
+    if (e) e.preventDefault();
     setClientExplorerKey((prevKey) => prevKey + 1);
   };
 
@@ -28,7 +27,7 @@ const Client = () => {
         {clientExplorerKey > 0 ? (
           <ClientExplorer key={clientExplorerKey} ip={ip} port={port} />
         ) : (
-          <div className="flex justify-center items-center h-screen  ">
+          <div className="flex justify-center items-center bg-white text-gray-500 h-40">
             No server selected
           </div>
         )}
