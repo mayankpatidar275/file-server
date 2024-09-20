@@ -14,7 +14,7 @@ const Server = ({ servers, setServers }) => {
 
   // arguments
   const [servePath, setServePath] = useState("");
-  const [port, setPort] = useState("5001");
+  const [port, setPort] = useState("5445");
   const [enableCors, setEnableCors] = useState(true);
   const [allowAll, setAllowAll] = useState(true);
   const [commandArgs, setCommandArgs] = useState([]);
@@ -56,6 +56,12 @@ const Server = ({ servers, setServers }) => {
       }
       if (line.includes("doesn't exist")) {
         return toast.error("Path does not exists");
+      }
+      if (line.includes("is not in 0..=65535")) {
+        return toast.error("Please enter a valid port between 0 to 65535");
+      }
+      if (line.includes("error: invalid value")) {
+        return toast.error("Please check your path and port");
       }
     });
   };
