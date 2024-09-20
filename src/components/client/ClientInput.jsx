@@ -79,13 +79,33 @@ const ClientInput = ({ ip, port, setIp, setPort, handleFormSubmit }) => {
         }}
         className="flex mx-auto w-full justify-center items-center space-x-4"
       >
-        <button
-          type="button"
-          onClick={handleModalOpen} // Open modal and trigger discovery
-          className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3 rounded text-sm"
-        >
-          Select Server
-        </button>
+        <div className="flex mx-auto w-full justify-center items-center space-x-4">
+          <button
+            type="button"
+            onClick={handleModalOpen} // Open modal and trigger discovery
+            className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3 rounded text-sm"
+          >
+            Select Server
+          </button>
+          {ip && port && (
+            <div>
+              <strong>current: </strong>
+              <span>
+                {ip}:{port}
+              </span>
+              <button
+                onClick={() => {
+                  setIp("");
+                  setPort("");
+                }}
+                className="m-3 underline"
+              >
+                clear
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* <span>or</span>
         <input
           type="text"

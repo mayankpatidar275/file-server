@@ -31,7 +31,9 @@
       {
         "title": "dufsgui",
         "width": 800,
-        "height": 600
+        "height": 800,
+        "minHeight": 700,
+        "minWidth": 700
       }
     ],
     "security": {
