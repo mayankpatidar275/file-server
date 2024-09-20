@@ -45,9 +45,10 @@ function FolderAndFiles({
       <span
         // onClick={() => getFileContent(p)}
         onClick={() => setFilePath(p)}
-        className="cursor-pointer inline-block text-gray-800 hover:text-blue-500"
+        className="cursor-pointer flex items-center text-gray-800 hover:text-blue-500"
       >
-        📄 {name}
+        <span className="mr-2">📄</span>
+        <span>{name}</span>
       </span>
     );
   }

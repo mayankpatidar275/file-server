@@ -54,7 +54,7 @@ const ClientExplorer = ({ ip, port }) => {
               <FolderAndFiles
                 // getFileContent={getFileContent}
                 isFolder={true}
-                name={"dufsRoot"}
+                name={`Explore ${ip}:${port}`}
                 p={filePath}
                 setFileContent={setFileContent}
                 searchIp={ip}
