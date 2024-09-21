@@ -184,12 +184,12 @@ const Server = ({ servers, setServers }) => {
     }
   };
 
-  useEffect(() => {
-    console.log("servers: ", servers);
-  }, [servers]);
+  // useEffect(() => {
+  //   console.log("servers: ", servers);
+  // }, [servers]);
 
   return (
-    <>
+    <div className="overflow-y-auto h-[90vh]">
       {servers.length > 0 ? (
         <div className="w-screen mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
           <ul>
@@ -202,23 +202,23 @@ const Server = ({ servers, setServers }) => {
                     : ""
                 }`}
               >
-                <div className="flex items-center">
-                  <p className="text-base text-green-600 mr-2">Serving:</p>
-                  <p className="text-base text-gray-900 font-semibold">
+                <div className="flex w-full items-center justify-evenly p-4">
+                  <strong className="text-base text-gray-900 font-semibold w-[50vw] break-words">
                     {item?.path}
-                  </p>
-                  <div className="w-4"></div>
-                  <p className="text-base text-gray-600 mx-2">at port</p>
-                  <p className="text-base text-gray-900 font-semibold">
-                    {item?.port}
+                  </strong>
+                  <p className="text-base text-gray-600 mx-2 w-40 text-center">
+                    at port
+                    <strong className="text-base text-gray-900 font-semibold ml-4 w-20 text-center break-words">
+                      {item?.port}
+                    </strong>
                   </p>
                 </div>
 
                 <button
                   onClick={() => handleStopServer(item.server.pid)}
-                  className="text-white py-2 px-4 rounded-md  focus:outline-none flex items-center"
+                  className="md:mt-0 py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all duration-200 flex items-center focus:outline-none"
                 >
-                  ❌
+                  Stop
                 </button>
               </li>
             ))}
@@ -296,7 +296,7 @@ const Server = ({ servers, setServers }) => {
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
