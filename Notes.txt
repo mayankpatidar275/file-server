@@ -66,3 +66,7 @@ mDNS app in android to discover
 
 Todo: 
 running servers list in servers tab should come from discovering and not react state. (because it gets empty on reload) || or disable the option to reload
+
+
+Todo: runnning servers styling, error message on unsupported media
+Todo: use iframe instead of library for Fileviewer
